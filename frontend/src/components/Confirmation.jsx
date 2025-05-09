@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { CartContext} from './context/Cart';
 import Layout from './common/Layout'
 import { apiUrl, userToken } from './common/http';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const Confirmation = () => {
   const [order, setOrder] = useState([]);
@@ -13,6 +15,7 @@ const Confirmation = () => {
   const { clearCart } = useContext(CartContext);
   const paymentData = new URLSearchParams(window.location.search).get("data");
   const isEsewaSuccess = paymentData && JSON.parse(atob(paymentData)).status === "COMPLETE";
+  const pdfRef = useRef();
 
   const fetchOrder = async () => {
     fetch(`${apiUrl}/get-order-details/${params.id}`, {
@@ -43,9 +46,35 @@ useEffect(() => {
   }
 }, []);
 
+const downloadPDF = () => {
+  const input = pdfRef.current;
+  const noPrintElements = document.querySelectorAll('.no-print');
+
+  // Hide elements with class "no-print"
+  noPrintElements.forEach(el => el.style.display = 'none');
+
+  window.scrollTo(0, 0);
+
+  setTimeout(() => {
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`order_${order.id}.pdf`);
+
+      // Restore display after download
+      noPrintElements.forEach(el => el.style.display = '');
+    });
+  }, 500);
+};
+
+
+
   return (
        <Layout>
-        <div className='container py-5'>
+        <div className='container py-5' >
           {
             loading === true && 
             <div className='text-center py-5'>
@@ -58,6 +87,7 @@ useEffect(() => {
           {
             loading === false && order &&
           <div>
+            <div ref={pdfRef} className="p-3 bg-white">
               <div className='row'>
                   <h1 className='text-center fw-bold text-success'>Thanks You!</h1>
                   <p className='text-muted text-center'>Your order has been successfully placed.</p>
@@ -141,14 +171,15 @@ useEffect(() => {
                                     </tfoot>
                               </table>
                           </div>
-
-                          <div className='text-center'>
-                                <button className='btn btn-primary'>View Order Details</button>
+                                         
+                          <div className='no-print text-center mt-4'>
+                                <button className='btn btn-primary'  onClick={downloadPDF}>Download Receipt</button>
                                 <Link to={'/'} className='btn btn-outline-secondary ms-2'>Continue Shopping</Link>
                           </div>
                       </div>
                   </div>
               </div>
+          </div>
           </div>
           }
 

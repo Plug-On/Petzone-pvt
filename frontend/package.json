@@ -12,7 +12,9 @@
   "dependencies": {
     "bootstrap": "^5.3.5",
     "crypto-js": "^4.2.0",
+    "html2canvas": "^1.4.1",
     "jodit-react": "^5.2.19",
+    "jspdf": "^3.0.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
