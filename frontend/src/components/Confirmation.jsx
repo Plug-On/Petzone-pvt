@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { CartContext} from './context/Cart';
 import Layout from './common/Layout'
 import { apiUrl, userToken } from './common/http';
 import { Link, useParams } from 'react-router-dom';
@@ -9,6 +10,9 @@ const Confirmation = () => {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   const params = useParams();
+  const { clearCart } = useContext(CartContext);
+  const paymentData = new URLSearchParams(window.location.search).get("data");
+  const isEsewaSuccess = paymentData && JSON.parse(atob(paymentData)).status === "COMPLETE";
 
   const fetchOrder = async () => {
     fetch(`${apiUrl}/get-order-details/${params.id}`, {
@@ -31,9 +35,13 @@ const Confirmation = () => {
     });
   }
 
-  useEffect(() => {
-    fetchOrder();
-  },[]);
+useEffect(() => {
+  fetchOrder();
+
+  if (isEsewaSuccess) {
+    clearCart();
+  }
+}, []);
 
   return (
        <Layout>
@@ -81,7 +89,11 @@ const Confirmation = () => {
                                     }
                                     {/* <span className='badge bg-success'>  Pending</span>  */}
                               </p>
-                                <p><strong>Payment Method:</strong> COD</p>
+                                <p><strong>Payment Method:</strong> 
+{order.payment_status === 'paid' ? ' Esewa' : ' Cash on Delivery'}
+
+</p>
+
                           </div>
                           <div className='col-6'>
                               <p><strong>Customer:</strong> {order.name}</p>

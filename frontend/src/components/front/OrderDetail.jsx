@@ -103,7 +103,7 @@ const OrderDetail = () => {
                                             </div>
                                             <div className='col-md-4'>
                                                 <div className='text-secondary pt-5'>Payment Method</div>
-                                                <p>COD</p>
+                                                <p>{order.payment_status === 'paid' ? ' Esewa' : ' Cash on Delivery'}</p>
                                             </div>
                                         </div>  
 
