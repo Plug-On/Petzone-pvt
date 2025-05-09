@@ -57,7 +57,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className='col-md-4'>
+                <div className='col-md-4 py-4'>
                     <div className='card shadow'>
                         <div className='card-body'>
                           <h1>0</h1>
