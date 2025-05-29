@@ -16,7 +16,6 @@ use App\Http\Controllers\front\ProductController as FrontProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
 Route::post('admin/login',[AuthController::class,'authenticate']);
 Route::get('get-latest-products',[FrontProductController::class,'latestProducts']);
 Route::get('get-featured-products',[FrontProductController::class,'featuredProducts']);
@@ -28,6 +27,7 @@ Route::get('get-products-by-category/{categoryId}', [FrontProductController::cla
 Route::post('register',[AccountController::class,'register']);
 Route::post('login',[AccountController::class,'authenticate']);
 Route::get('get-shipping-front',[FrontShippingController::class,'getShipping']);
+Route::get('/home/recommendations', [FrontProductController::class, 'topSold']);
 
 
 Route::group(['middleware' => ['auth:sanctum','checkUserRole']], function () {
@@ -36,6 +36,7 @@ Route::group(['middleware' => ['auth:sanctum','checkUserRole']], function () {
     Route::get('get-orders',[AccountController::class,'getOrders']);
     Route::post('update-profile',[AccountController::class,'updateProfile']);
     Route::get('get-profile-details',[AccountController::class,'getAccountDetails']);
+
 
 
 });

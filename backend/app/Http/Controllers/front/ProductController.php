@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\front;
-
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
@@ -109,4 +110,25 @@ class ProductController extends Controller
         'data' => $products
     ],200);
     }
+
+public function topSold()
+{
+ $topProducts = OrderItem::select('product_id')
+    ->selectRaw('COUNT(*) as total_sold')
+    ->groupBy('product_id')
+    ->orderByDesc('total_sold')
+    ->take(4)
+    ->get()
+    ->pluck('product_id');
+
+$products = Product::with('product_images')
+    ->whereIn('id', $topProducts)
+    ->get();
+
+return response()->json([
+    'status' => 200,
+    'data' => $products
+], 200);
+
+}
 }
