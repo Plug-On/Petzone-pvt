@@ -44,7 +44,7 @@ const Header = () => {
   return (
     <header className="shadow">
       <div className="bg-dark text-center py-3">
-        <span className="text-white">Your fashion partner</span>
+        <span className="text-white">Your partner for everything pets</span>
       </div>
 
       <div className="container">
