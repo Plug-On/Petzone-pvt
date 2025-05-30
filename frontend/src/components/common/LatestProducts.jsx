@@ -23,7 +23,7 @@ const LatestProducts = () => {
 
   useEffect(() => {
     LatestProducts()
-  })
+  },[])
 
   return (
     <section className='section-2 pt-5'>
